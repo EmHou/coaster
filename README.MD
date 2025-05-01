@@ -86,7 +86,6 @@ The Smart Coaster supports detection of three drink types—coffee, fruit punch 
 
 Notes:
 - Always start each session with an empty **glass** cup to calibrate properly. If you switch glasses or locations, delete the photo `data/empty.jpg`.
-- Do **not** switch to a different drink before the coaster detects the cup is empty—this may cause miscounts.
 
 
 # Contributions
