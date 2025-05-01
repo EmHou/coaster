@@ -1,3 +1,7 @@
+# -----------------------------------------------------------------------------
+# Imports: bring in needed modules for serial communication, file I/O, timing,
+# JSON output, date/time stamping, subprocess calls, and image analysis.
+# -----------------------------------------------------------------------------
 import serial
 import time
 import os
@@ -10,6 +14,9 @@ import subprocess
 import sys
 from analyzer import set_ceiling_color, analyze_image
 
+# -----------------------------------------------------------------------------
+# Configuration: define constants and prepare folders for saving images.
+# -----------------------------------------------------------------------------
 # --- Serial Configuration ---
 SERIAL_PORT = '/dev/cu.usbmodem64E8335D24DC2'  # Update with your macOS serial port
 BAUD_RATE = 921600                             # Must match the rate in your Arduino sketch
@@ -25,13 +32,21 @@ if not os.path.exists(SAVE_FOLDER):
     print("Created folder:", SAVE_FOLDER)
 
 # --- Drink Tracking Configuration ---
-previous_drink = None
-coffee_count = 0
-water_count = 0
-fruit_punch_count = 0
-MAX_LEDS = 4
+previous_drink     = None  # last recognized drink type
+coffee_count       = 0     # number of coffee servings detected
+water_count        = 0     # number of water servings detected
+fruit_punch_count  = 0     # number of fruit punch servings detected
+MAX_LEDS           = 4     # maximum LED indicators per drink type
 
+# -----------------------------------------------------------------------------
+# Functions: encapsulate key behaviors for image capture, saving, analysis,
+# serial commands, and Zoom button monitoring.
+# -----------------------------------------------------------------------------
 def update_drink_counts(current_drink):
+    """
+    If the drink type changed from the previous capture, increment the
+    corresponding counter (up to MAX_LEDS). This drives LED updates later.
+    """
     global previous_drink, coffee_count, water_count, fruit_punch_count
     
     if previous_drink is not None and previous_drink != current_drink:
@@ -43,6 +58,10 @@ def update_drink_counts(current_drink):
             fruit_punch_count = min(fruit_punch_count + 1, MAX_LEDS)
 
 def send_drink_to_arduino(drink_type, count):
+    """
+    Format and send a command 'drink_type,count\\n' over serial to Arduino.
+    Arduino will map this to lighting LEDs.
+    """
     command = f"{drink_type},{count}\n"
     ser.write(command.encode('utf-8'))
     print(f"Sent to Arduino: {command.strip()}")
@@ -72,9 +91,10 @@ time.sleep(2)
 
 def capture_jpeg():
     """
-    Reads from the serial port until a complete JPEG image is received.
-    A valid JPEG image begins with 0xFF 0xD8 and ends with 0xFF 0xD9.
-    Returns the image data as bytes or None on timeout.
+    Read bytes from serial until a full JPEG is detected:
+      - JPEG start: 0xFF 0xD8
+      - JPEG end:   0xFF 0xD9
+    Returns the image data or None on timeout.
     """
     data = bytearray()
     start_found = False
@@ -95,6 +115,7 @@ def capture_jpeg():
                     start_found = True
         else:
             data.append(byte[0])
+            # detect JPEG end marker
             if len(data) >= 2 and data[-2] == 0xFF and data[-1] == 0xD9:
                 break
     return bytes(data)
@@ -107,8 +128,8 @@ def save_image(data, filename):
 
 def initialize_ceiling_image():
     """
-    Captures the first image from the camera, saves it as the ceiling image in ./data,
-    sets it as the ceiling color reference, and sends a "TEST" command to Arduino.
+    On startup, capture a reference image ('ceiling') to calibrate color
+    detection. Save it under './data/empty.jpg', then call set_ceiling_color.
     """
 
     ser.write("TEST\n".encode('utf-8'))
@@ -126,6 +147,9 @@ def initialize_ceiling_image():
     print("Ceiling color set.")
 
 def zoom():
+    """
+    Monitor the serial port for button press events to launch Zoom.
+    """
     line = ser.readline().decode("utf-8", errors="ignore").strip()
 
     if line:
