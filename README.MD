@@ -67,7 +67,7 @@ Before running, ensure you have completed both the Arduino and Python setup inst
    ```
 
 # Interacting with the Smart Coaster
-The Smart Coaster supports detection of three drink types—coffee, fruit punch (red/red juice), and water. It requires a clear glass cup to function correctly.
+The Smart Coaster supports detection of three drink types—coffee, fruit punch (red juice), and water. It requires a clear glass cup to function correctly.
 
 1. Initialization (Empty‐Cup Calibration)
    - Follow the [Setup Instructions](#setup-instructions) above to configure the Smart Coaster
