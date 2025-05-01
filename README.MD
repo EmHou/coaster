@@ -55,11 +55,11 @@ All dependencies are in requirements.txt. More information will be in the setup 
    python main.py
    ```
 5. Open `main.py` and update the `SERIAL_PORT` constant (line 21) to match your Arduino’s port.
-    - This was step 5 above. In my example, it is `/dev/cu.usbmodem64E8335D24DC2`.
+    - This was [step 5](#arduino) above. In my example, it is `/dev/cu.usbmodem64E8335D24DC2`.
 
 
 ## Running the Coaster
-Before running, ensure you have completed both the Arduino and Python setup instructions above.
+Before running, ensure you have completed both the [Arduino](#arduino) and the [Python](#python) setup instructions above.
 
 1. In the Arduino IDE, open the Arduino sketch (`arduino.ino`) located in this project’s `arduino_settings` folder and upload it to your coaster.
 2. Once the Arduino sketch is running, activate your Python virtual environment (instructions above) and launch the main application:
