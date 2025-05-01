@@ -1,5 +1,6 @@
 # Smart Coaster
 __"a tangible user interface designed to support remote workers by tracking caffeine intake, encouraging breaks, and promoting team bonding"__
+
 <img src="readme_images/coaster.jpeg" alt="final coaster" width="50%" />
 
 
